@@ -27,7 +27,7 @@ body {
 .chatbot-title {
   text-align: center;
   margin-bottom: 20px;
-  color: #42a5f5; /* Blue color for the title */
+  color: #42a5f5; 
 }
 
 /* Chatbot Messages Area */
