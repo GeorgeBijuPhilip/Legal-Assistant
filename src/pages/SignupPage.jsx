@@ -1,31 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
 
-    // Retrieve stored users from localStorage
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(user => user.email === email && user.password === password);
-
-    if (user) {
-      navigate('/chat'); // Redirect to the Chat component
-    } else {
-      setError('Invalid email or password');
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
     }
+
+    // Store user details in localStorage (simulating a database)
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    if (users.some(user => user.email === email)) {
+      setError("Email already exists. Try logging in.");
+      return;
+    }
+
+    users.push({ email, password });
+    localStorage.setItem('users', JSON.stringify(users));
+
+    alert("Signup successful! You can now log in.");
+    navigate('/login'); // Redirect to login page
   };
 
   return (
     <div style={styles.container}>
-      <div style={styles.loginBox}>
-        <h2 style={styles.title}>Login</h2>
-        <form onSubmit={handleLogin} style={styles.form}>
+      <div style={styles.signupBox}>
+        <h2 style={styles.title}>Sign Up</h2>
+        <form onSubmit={handleSignup} style={styles.form}>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Email:</label>
             <input
@@ -45,16 +55,27 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               style={styles.input}
-              placeholder="Enter your password"
+              placeholder="Create a password"
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Confirm Password:</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              style={styles.input}
+              placeholder="Confirm your password"
             />
           </div>
           {error && <p style={styles.error}>{error}</p>}
           <button type="submit" style={styles.button}>
-            Login
+            Sign Up
           </button>
         </form>
         <p style={styles.redirectText}>
-          Don't have an account? <a href="/signup" style={styles.link}>Sign Up</a>
+          Already have an account? <a href="/login" style={styles.link}>Login</a>
         </p>
       </div>
     </div>
@@ -74,7 +95,7 @@ const styles = {
     padding: '20px',
     boxSizing: 'border-box',
   },
-  loginBox: {
+  signupBox: {
     width: '100%',
     maxWidth: '400px',
     padding: '30px',
@@ -149,4 +170,4 @@ const styles = {
   },
 };
 
-export default LoginPage;
+export default SignupPage;
